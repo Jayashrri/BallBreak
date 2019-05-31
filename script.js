@@ -4,7 +4,7 @@ var minrockH=350;
 var rockH;
 var x;
 var y;
-var dx=2;
+var dx=1;
 var dy=0;
 var lr=Math.round(Math.random());
 if(lr==1)
@@ -18,11 +18,11 @@ function init(){
     var gamescreen = document.getElementById('gamescreen');
     ctx = gamescreen.getContext('2d');
     ctx.transform(1,0,0,-1,0,550);
-    setInterval(rockgen,10);
+    setInterval(rockbounce,10);
 }
 
 
-function rockgen(){
+function rockbounce(){
     ctx.clearRect(0,100,410,450);
     ctx.fillStyle="#396639";
     ctx.fillRect(0,0,410,100);
@@ -34,11 +34,14 @@ function rockgen(){
     rock.arc(x,y,20,0,Math.PI*2,true);
     rock.closePath();
     rock.fill();
-    dy+=9.8/100;
+    dy+=9.8/200;
     if(x<0||x>390)
         dx=-dx;
-    if(y<121)
+    if(y<120)
         dy=-dy;
+    if(y>rockH){
+        dy=9.8/200;
+    }
     y-=dy;
     x+=dx;
 }
