@@ -4,6 +4,42 @@ var ctx;
 
 var minrockH=350;
 var maxStr=10;
+var canonshift=0;
+
+
+function movecanon(event){
+    switch (event.keyCode) {
+        case 37:
+            canonshift=-4;
+            break;
+        case 39:
+            canonshift=4;
+            break;
+    }  
+}
+
+
+class Canon {
+    constructor(){
+        this.x=0;
+        this.y=100;
+        this.w=40;
+        this.h=20;
+        this.dx=0;
+    }
+
+    drawcanon(canonshift){
+        this.x+=canonshift;
+        if(this.x>370){
+            this.x=370;
+        }
+        else if(this.x<0){
+            this.x=0;
+        }
+        ctx.fillStyle="#2d2d2d";
+        ctx.fillRect(this.x,this.y,this.w,this.h);
+    }
+}
 
 
 class Rock {
@@ -30,9 +66,6 @@ class Rock {
         ctx.arc(this.x,this.y,this.radius,0,Math.PI*2,true);
         ctx.closePath();
         ctx.fill();
-    }
-
-    updaterock(){
         if(this.x<20||this.x>390){
             this.dx=-this.dx;
         }
@@ -54,13 +87,15 @@ function init(){
     var gamescreen = document.getElementById('gamescreen');
     ctx = gamescreen.getContext('2d');
     ctx.transform(1,0,0,-1,0,550);
+    let canon = new Canon();
+    window.addEventListener("keydown", movecanon, false);
     let ball = new Rock();
     setInterval(function(){
         ball.drawrock();
-        ball.updaterock();
+        canon.drawcanon(canonshift);
+        canonshift=0;
     },10);
 }
-
 
 startbtn.style.display="block";
 startbtn.onclick=init;
