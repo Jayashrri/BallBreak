@@ -10,10 +10,10 @@ var canonshift=0;
 function movecanon(event){
     switch (event.keyCode) {
         case 37:
-            canonshift=-4;
+            canonshift=-5;
             break;
         case 39:
-            canonshift=4;
+            canonshift=5;
             break;
     }  
 }
@@ -49,7 +49,7 @@ class Rock {
             this.x=390;
         else this.x=20;
         this.rockH=Math.floor(Math.random()*(530-minrockH)+minrockH);
-        this.dx=1;
+        this.dx=0.5;
         this.dy=0;
         this.y=this.rockH;
         this.strength=Math.floor(Math.random()*10+1);
@@ -66,6 +66,13 @@ class Rock {
         ctx.arc(this.x,this.y,this.radius,0,Math.PI*2,true);
         ctx.closePath();
         ctx.fill();
+        ctx.save();
+        ctx.transform(1,0,0,-1,0,550);
+        ctx.fillStyle="white";
+        ctx.font="20px Arial";
+        ctx.textAlign="center";
+        ctx.fillText(this.strength,this.x,550-this.y);
+        ctx.restore();
         if(this.x<20||this.x>390){
             this.dx=-this.dx;
         }
