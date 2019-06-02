@@ -50,6 +50,14 @@ class Canon {
         ctx.fillRect(this.x,this.y,this.w,this.h);
         canonpos=this.x+20;
     }
+
+    get cx(){
+        return this.x;
+    }
+
+    get cy(){
+        return this.y;
+    }
 }
 
 
@@ -162,6 +170,35 @@ function createbullet(){
 }
 
 
+function checkcollision(cx,cy,rx,ry){
+    var distx = Math.abs(cx - rx-20);
+    var disty = Math.abs(cy - ry-10);
+
+    if (distx > 40) { return false; }
+    if (disty > 30) { return false; }
+
+    if (distx <= 20) { return true; } 
+    if (disty <= 10) { return true; }
+
+    var dx=distx-20;
+    var dy=disty-10;
+    return (dx*dx+dy*dy<=400);
+}
+
+
+function rockhitcanon(canon,drawinterval,shoot){
+    for(i=0;i<currentrocks.length;i++){
+        var result = checkcollision(currentrocks[i].rx,currentrocks[i].ry,canon.cx,canon.cy);
+        if(result){
+            window.alert("Game Over!");
+            document.location.reload();
+            clearInterval(drawinterval);
+            clearInterval(shoot);
+        }
+    }
+}
+
+
 function bullethitrock(){
     for(i=0;i<shotbullets.length;i++){
         if(shotbullets[i].isalive){
@@ -196,7 +233,8 @@ function init(){
         ball=new Rock();
     }
 
-    setInterval(function(){
+    var shoot = setInterval(createbullet,200);
+    var drawinterval = setInterval(function(){
         drawbg();
         for(i=0;i<currentrocks.length;i++){
             currentrocks[i].drawrock();
@@ -205,9 +243,9 @@ function init(){
         for(i=0;i<shotbullets.length;i++){
             shotbullets[i].movebullet();
         }
+        rockhitcanon(canon,drawinterval,shoot);
         bullethitrock();
     },10);
-    setInterval(createbullet,100);
 }
 
 startbtn.style.display="block";
