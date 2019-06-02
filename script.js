@@ -1,22 +1,14 @@
 const startbtn=document.getElementById('start');
 
+var i;
+
 var ctx;
 
 var minrockH=350;
 var maxStr=10;
 var canonshift=0;
-
-
-function movecanon(event){
-    switch (event.keyCode) {
-        case 37:
-            canonshift=-5;
-            break;
-        case 39:
-            canonshift=5;
-            break;
-    }  
-}
+var canonpos=20;
+var shotbullets=[];
 
 
 class Canon {
@@ -38,6 +30,7 @@ class Canon {
         }
         ctx.fillStyle="#2d2d2d";
         ctx.fillRect(this.x,this.y,this.w,this.h);
+        canonpos=this.x+20;
     }
 }
 
@@ -89,6 +82,52 @@ class Rock {
 }
 
 
+class Bullet {
+    constructor(){
+        this.y=120;
+        this.dy=5;
+        this.x=canonpos;
+        this.alive=true;
+        shotbullets.push(this);
+    }
+
+    movebullet(){
+        if(this.alive==true){
+            ctx.beginPath();
+            ctx.fillStyle="#6b6b6b";
+            ctx.arc(this.x,this.y,4,0,Math.PI*2,false);
+            ctx.closePath();
+            ctx.fill();
+            this.y+=this.dy;
+            if(this.y>550){
+                this.alive=false;
+            }
+        }
+    }
+
+    get isalive(){
+        return this.alive;
+    }
+}
+
+
+function createbullet(){
+    bullets=new Bullet();
+}
+
+
+function movecanon(event){
+    switch (event.keyCode) {
+        case 37:
+            canonshift=-8;
+            break;
+        case 39:
+            canonshift=8;
+            break;
+    }  
+}
+
+
 function init(){
     startbtn.style.display="none";
     var gamescreen = document.getElementById('gamescreen');
@@ -101,7 +140,11 @@ function init(){
         ball.drawrock();
         canon.drawcanon(canonshift);
         canonshift=0;
+        for(i=0;i<shotbullets.length;i++){
+            shotbullets[i].movebullet();
+        }
     },10);
+    setInterval(createbullet,30);
 }
 
 startbtn.style.display="block";
