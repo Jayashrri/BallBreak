@@ -10,6 +10,9 @@ var canonshift=0;
 var canonpos=20;
 var shotbullets=[];
 
+var rightpress=false;
+var leftpress=false;
+
 
 class Canon {
     constructor(){
@@ -21,7 +24,12 @@ class Canon {
     }
 
     drawcanon(canonshift){
-        this.x+=canonshift;
+        if(rightpress){
+            this.x+=5;
+        }
+        if(leftpress){
+            this.x-=5;
+        }
         if(this.x>370){
             this.x=370;
         }
@@ -116,30 +124,24 @@ function createbullet(){
 }
 
 
-function movecanon(event){
-    switch (event.keyCode) {
-        case 37:
-            canonshift=-8;
-            break;
-        case 39:
-            canonshift=8;
-            break;
-    }  
-}
-
-
 function init(){
     startbtn.style.display="none";
     var gamescreen = document.getElementById('gamescreen');
     ctx = gamescreen.getContext('2d');
     ctx.transform(1,0,0,-1,0,550);
     let canon = new Canon();
-    window.addEventListener("keydown", movecanon, false);
+    document.onkeydown = function(e) {
+        if(e.keyCode == 37) leftpress = true;
+        if(e.keyCode == 39) rightpress = true;
+    }
+    document.onkeyup = function(e) {
+        if(e.keyCode == 37) leftpress = false;
+        if(e.keyCode == 39) rightpress = false;
+    }
     let ball = new Rock();
     setInterval(function(){
         ball.drawrock();
-        canon.drawcanon(canonshift);
-        canonshift=0;
+        canon.drawcanon();
         for(i=0;i<shotbullets.length;i++){
             shotbullets[i].movebullet();
         }
