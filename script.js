@@ -75,7 +75,7 @@ class Rock {
             this.x=380;
         else this.x=20;
         this.rockH=Math.floor(Math.random()*(510-minrockH)+minrockH);
-        this.dx=Math.random();
+        this.dx=Math.random()+1/100;
         this.dy=0;
         this.y=this.rockH;
         this.strength=Math.floor(Math.random()*10+1);
@@ -89,6 +89,9 @@ class Rock {
             ctx.arc(this.x,this.y,this.radius,0,Math.PI*2,true);
             ctx.closePath();
             ctx.fill();
+            ctx.lineWidth=3;
+            ctx.strokeStyle="white";
+            ctx.stroke();
             ctx.save();
             ctx.transform(1,0,0,-1,0,530);
             ctx.fillStyle="white";
@@ -176,6 +179,10 @@ function createbullet(){
     bullets=new Bullet();
 }
 
+function createrock(){
+    ball=new Rock();
+}
+
 
 function checkcollision(cx,cy,rx,ry){
     var distx = Math.abs(cx - rx-20);
@@ -232,18 +239,19 @@ function init(){
     let canon = new Canon();
 
     document.onkeydown = function(e) {
-        if(e.keyCode == 37) leftpress = true;
-        if(e.keyCode == 39) rightpress = true;
+        if(e.keyCode == 37 || e.keyCode == 65) leftpress = true;
+        if(e.keyCode == 39 || e.keyCode == 68) rightpress = true;
     }
     document.onkeyup = function(e) {
-        if(e.keyCode == 37) leftpress = false;
-        if(e.keyCode == 39) rightpress = false;
+        if(e.keyCode == 37 || e.keyCode == 65) leftpress = false;
+        if(e.keyCode == 39 || e.keyCode == 68) rightpress = false;
     }
 
     for(i=0;i<3;i++){
-        ball=new Rock();
+        createrock();
     }
 
+    var newrock = setInterval(createrock,5000);
     var shoot = setInterval(createbullet,200);
     var drawinterval = setInterval(function(){
         drawbg();
