@@ -1,9 +1,12 @@
 const startbtn=document.getElementById('start');
+const scoredisp=document.getElementById('scoredisp');
 
 var i;
 var j;
 
 var ctx;
+
+var playerscore=0;
 
 var minrockH=350;
 var maxStr=10;
@@ -16,18 +19,22 @@ var leftpress=false;
 
 
 function drawbg(){
-    ctx.clearRect(0,100,410,450);
+    ctx.clearRect(0,80,410,450);
     ctx.fillStyle="#396639";
-    ctx.fillRect(0,0,410,100);
+    ctx.fillRect(0,0,410,80);
     ctx.fillStyle="#c5dfe0";
-    ctx.fillRect(0,100,410,450);
+    ctx.fillRect(0,80,410,450);
+}
+
+function updatescore(){
+    scoredisp.textContent="Score: "+playerscore;
 }
 
 
 class Canon {
     constructor(){
         this.x=0;
-        this.y=100;
+        this.y=80;
         this.w=40;
         this.h=20;
         this.dx=0;
@@ -65,9 +72,9 @@ class Rock {
     constructor(){
         this.radius=20;
         if(Math.round(Math.random())==1)
-            this.x=390;
+            this.x=380;
         else this.x=20;
-        this.rockH=Math.floor(Math.random()*(530-minrockH)+minrockH);
+        this.rockH=Math.floor(Math.random()*(510-minrockH)+minrockH);
         this.dx=Math.random();
         this.dy=0;
         this.y=this.rockH;
@@ -83,13 +90,13 @@ class Rock {
             ctx.closePath();
             ctx.fill();
             ctx.save();
-            ctx.transform(1,0,0,-1,0,550);
+            ctx.transform(1,0,0,-1,0,530);
             ctx.fillStyle="white";
             ctx.font="20px Arial";
             ctx.textAlign="center";
-            ctx.fillText(this.strength,this.x,550-this.y);
+            ctx.fillText(this.strength,this.x,530-this.y);
             ctx.restore();
-            if(this.x<20||this.x>390){
+            if(this.x<20||this.x>380){
                 this.dx=-this.dx;
             }
             if(this.y<120){
@@ -138,7 +145,7 @@ class Bullet {
             ctx.closePath();
             ctx.fill();
             this.y+=this.dy;
-            if(this.y>550){
+            if(this.y>530){
                 this.alive=false;
             }
         }
@@ -190,7 +197,7 @@ function rockhitcanon(canon,drawinterval,shoot){
     for(i=0;i<currentrocks.length;i++){
         var result = checkcollision(currentrocks[i].rx,currentrocks[i].ry,canon.cx,canon.cy);
         if(result){
-            window.alert("Game Over!");
+            window.alert("Game Over!\n   Score: "+playerscore);
             document.location.reload();
             clearInterval(drawinterval);
             clearInterval(shoot);
@@ -206,6 +213,8 @@ function bullethitrock(){
                 if(shotbullets[i].bx > currentrocks[j].rx-20 && shotbullets[i].bx < currentrocks[j].rx+20 && shotbullets[i].by > currentrocks[j].ry-20 && shotbullets[i].by < currentrocks[j].ry+20){
                     shotbullets[i].bulletused();
                     currentrocks[j].rockhit();
+                    playerscore++;
+                    updatescore();
                 }
             }
         }
@@ -215,9 +224,11 @@ function bullethitrock(){
 
 function init(){
     startbtn.style.display="none";
+    scoredisp.style.display="block";
+    updatescore();
     var gamescreen = document.getElementById('gamescreen');
     ctx = gamescreen.getContext('2d');
-    ctx.transform(1,0,0,-1,0,550);
+    ctx.transform(1,0,0,-1,0,530);
     let canon = new Canon();
 
     document.onkeydown = function(e) {
@@ -249,4 +260,5 @@ function init(){
 }
 
 startbtn.style.display="block";
+scoredisp.style.display="none";
 startbtn.onclick=init;
