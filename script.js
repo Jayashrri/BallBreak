@@ -75,16 +75,16 @@ class Canon {
 
 
 class Rock {
-    constructor(){
-        this.radius=30;
-        if(Math.round(Math.random())==1)
-            this.x=380;
-        else this.x=30;
-        this.rockH=Math.floor(Math.random()*(510-minrockH)+minrockH);
+    constructor(str,rhm,rh,rx,r,n,rhd){
+        this.radius=r;
+        this.x=rx;
+        this.rockH=rhm;
         this.dx=Math.random()+1/100;
-        this.dy=0;
-        this.y=this.rockH;
-        this.strength=Math.floor(Math.random()*10+1);
+        this.dy=rhd;
+        this.y=rh;
+        this.os=str;
+        this.strength=str;
+        this.life=n;
         currentrocks.push(this);
     }
 
@@ -105,12 +105,12 @@ class Rock {
             ctx.textAlign="center";
             ctx.fillText(this.strength,this.x,530-this.y);
             ctx.restore();
-            if(this.x<30||this.x>380){
+            if(this.x<this.radius||this.x>410-this.radius){
                 this.dx=-this.dx;
             }
-            if(this.y<120){
+            if(this.y<100+this.radius){
                 this.dy=-this.dy;
-                this.y=120;
+                this.y=100+this.radius;
             }
             if(this.y>this.rockH)
                 this.dy=0;
@@ -119,6 +119,11 @@ class Rock {
             this.x+=this.dx;
         }
         else{
+            let ns=Math.floor(this.os/2);
+            if(ns!=0&&this.life==1){
+                ball=new Rock(ns,this.rockH,this.y,this.x-8,16,0,-this.dy);
+                ball=new Rock(ns,this.rockH,this.y,this.x+8,16,0,-this.dy);
+            }
             currentrocks.splice(currentrocks.indexOf(this),1);
         }
     }
@@ -186,7 +191,13 @@ function createbullet(){
 }
 
 function createrock(){
-    ball=new Rock();
+    let str=Math.floor(Math.random()*10+1);
+    let rh=Math.floor(Math.random()*(510-minrockH)+minrockH);
+    let rx;
+    if(Math.round(Math.random())==1)
+        rx=380;
+    else rx=30;
+    ball=new Rock(str,rh,rh,rx,30,1,0);
 }
 
 
@@ -259,7 +270,7 @@ function init(){
         createrock();
     }
 
-    newrock = setInterval(createrock,5000);
+    newrock = setInterval(createrock,8000);
     shoot = setInterval(createbullet,200);
     drawinterval = setInterval(function(){
         drawbg();
@@ -284,7 +295,7 @@ function pausegame(){
     }
     else{
         pausebtn.value="Pause";
-        newrock = setInterval(createrock,5000);
+        newrock = setInterval(createrock,8000);
         shoot = setInterval(createbullet,200);
         drawinterval = setInterval(function(){
             drawbg();
