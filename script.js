@@ -8,6 +8,9 @@ var j;
 var ctx;
 
 var playerscore=0;
+var bps=5;
+var maxstrength=10;
+var count=0;
 
 var minrockH=350;
 var maxStr=10;
@@ -34,6 +37,12 @@ function drawbg(){
 
 function updatescore(){
     scoredisp.textContent="Score: "+playerscore;
+    count++;
+    if(count==5){
+        bps++;
+        maxstrength++;
+        count=0;
+    }
 }
 
 
@@ -108,9 +117,9 @@ class Rock {
             if(this.x<this.radius||this.x>410-this.radius){
                 this.dx=-this.dx;
             }
-            if(this.y<100+this.radius){
+            if(this.y<90+this.radius){
                 this.dy=-this.dy;
-                this.y=100+this.radius;
+                this.y=90+this.radius;
             }
             if(this.y>this.rockH)
                 this.dy=0;
@@ -121,8 +130,8 @@ class Rock {
         else{
             let ns=Math.floor(this.os/2);
             if(ns!=0&&this.life==1){
-                ball=new Rock(ns,this.rockH,this.y,this.x-8,16,0,-this.dy);
-                ball=new Rock(ns,this.rockH,this.y,this.x+8,16,0,-this.dy);
+                ball=new Rock(ns,this.rockH,this.y,this.x-10,16,0,-this.dy);
+                ball=new Rock(ns,this.rockH,this.y,this.x+10,16,0,-this.dy);
             }
             currentrocks.splice(currentrocks.indexOf(this),1);
         }
@@ -138,6 +147,10 @@ class Rock {
     
     get ry(){
         return this.y;
+    }
+
+    get r(){
+        return this.radius;
     }
 }
 
@@ -191,7 +204,7 @@ function createbullet(){
 }
 
 function createrock(){
-    let str=Math.floor(Math.random()*10+1);
+    let str=Math.floor(Math.random()*maxstrength+1);
     let rh=Math.floor(Math.random()*(510-minrockH)+minrockH);
     let rx;
     if(Math.round(Math.random())==1)
@@ -201,12 +214,12 @@ function createrock(){
 }
 
 
-function checkcollision(cx,cy,rx,ry){
+function checkcollision(cx,cy,rx,ry,r){
     var distx = Math.abs(cx - rx-20);
     var disty = Math.abs(cy - ry-10);
 
-    if (distx > 50) { return false; }
-    if (disty > 40) { return false; }
+    if (distx > 20 + r) { return false; }
+    if (disty > 10 + r) { return false; }
 
     if (distx <= 20) { return true; } 
     if (disty <= 10) { return true; }
@@ -219,7 +232,7 @@ function checkcollision(cx,cy,rx,ry){
 
 function rockhitcanon(){
     for(i=0;i<currentrocks.length;i++){
-        var result = checkcollision(currentrocks[i].rx,currentrocks[i].ry,canon.cx,canon.cy);
+        var result = checkcollision(currentrocks[i].rx,currentrocks[i].ry,canon.cx,canon.cy,currentrocks[i].r);
         if(result){
             window.alert("Game Over!\n   Score: "+playerscore);
             document.location.reload();
@@ -296,7 +309,7 @@ function pausegame(){
     else{
         pausebtn.value="Pause";
         newrock = setInterval(createrock,8000);
-        shoot = setInterval(createbullet,200);
+        shoot = setInterval(createbullet,1000/bps);
         drawinterval = setInterval(function(){
             drawbg();
             for(i=0;i<currentrocks.length;i++){
