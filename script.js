@@ -1,5 +1,6 @@
 const startbtn=document.getElementById('start');
 const scoredisp=document.getElementById('scoredisp');
+const pausebtn=document.getElementById('pause');
 
 var i;
 var j;
@@ -16,6 +17,11 @@ var currentrocks=[];
 
 var rightpress=false;
 var leftpress=false;
+
+var newrock;
+var shoot;
+var drawinterval;
+var canon;
 
 
 function drawbg(){
@@ -70,10 +76,10 @@ class Canon {
 
 class Rock {
     constructor(){
-        this.radius=20;
+        this.radius=30;
         if(Math.round(Math.random())==1)
             this.x=380;
-        else this.x=20;
+        else this.x=30;
         this.rockH=Math.floor(Math.random()*(510-minrockH)+minrockH);
         this.dx=Math.random()+1/100;
         this.dy=0;
@@ -99,7 +105,7 @@ class Rock {
             ctx.textAlign="center";
             ctx.fillText(this.strength,this.x,530-this.y);
             ctx.restore();
-            if(this.x<20||this.x>380){
+            if(this.x<30||this.x>380){
                 this.dx=-this.dx;
             }
             if(this.y<120){
@@ -188,19 +194,19 @@ function checkcollision(cx,cy,rx,ry){
     var distx = Math.abs(cx - rx-20);
     var disty = Math.abs(cy - ry-10);
 
-    if (distx > 40) { return false; }
-    if (disty > 30) { return false; }
+    if (distx > 50) { return false; }
+    if (disty > 40) { return false; }
 
     if (distx <= 20) { return true; } 
     if (disty <= 10) { return true; }
 
     var dx=distx-20;
     var dy=disty-10;
-    return (dx*dx+dy*dy<=400);
+    return (dx*dx+dy*dy<=900);
 }
 
 
-function rockhitcanon(canon,drawinterval,shoot){
+function rockhitcanon(){
     for(i=0;i<currentrocks.length;i++){
         var result = checkcollision(currentrocks[i].rx,currentrocks[i].ry,canon.cx,canon.cy);
         if(result){
@@ -208,6 +214,7 @@ function rockhitcanon(canon,drawinterval,shoot){
             document.location.reload();
             clearInterval(drawinterval);
             clearInterval(shoot);
+            clearInterval(newrock);
         }
     }
 }
@@ -217,7 +224,7 @@ function bullethitrock(){
     for(i=0;i<shotbullets.length;i++){
         if(shotbullets[i].isalive){
             for(j=0;j<currentrocks.length;j++){
-                if(shotbullets[i].bx > currentrocks[j].rx-20 && shotbullets[i].bx < currentrocks[j].rx+20 && shotbullets[i].by > currentrocks[j].ry-20 && shotbullets[i].by < currentrocks[j].ry+20){
+                if(shotbullets[i].bx > currentrocks[j].rx-30 && shotbullets[i].bx < currentrocks[j].rx+30 && shotbullets[i].by > currentrocks[j].ry-30 && shotbullets[i].by < currentrocks[j].ry+30){
                     shotbullets[i].bulletused();
                     currentrocks[j].rockhit();
                     playerscore++;
@@ -232,11 +239,12 @@ function bullethitrock(){
 function init(){
     startbtn.style.display="none";
     scoredisp.style.display="block";
+    pausebtn.style.display="block";
     updatescore();
     var gamescreen = document.getElementById('gamescreen');
     ctx = gamescreen.getContext('2d');
     ctx.transform(1,0,0,-1,0,530);
-    let canon = new Canon();
+    canon = new Canon();
 
     document.onkeydown = function(e) {
         if(e.keyCode == 37 || e.keyCode == 65) leftpress = true;
@@ -251,9 +259,9 @@ function init(){
         createrock();
     }
 
-    var newrock = setInterval(createrock,5000);
-    var shoot = setInterval(createbullet,200);
-    var drawinterval = setInterval(function(){
+    newrock = setInterval(createrock,5000);
+    shoot = setInterval(createbullet,200);
+    drawinterval = setInterval(function(){
         drawbg();
         for(i=0;i<currentrocks.length;i++){
             currentrocks[i].drawrock();
@@ -262,11 +270,40 @@ function init(){
         for(i=0;i<shotbullets.length;i++){
             shotbullets[i].movebullet();
         }
-        rockhitcanon(canon,drawinterval,shoot);
+        rockhitcanon();
         bullethitrock();
     },10);
 }
 
+function pausegame(){
+    if(pausebtn.value=="Pause"){
+        pausebtn.value="Resume";
+        clearInterval(drawinterval);
+        clearInterval(newrock);
+        clearInterval(shoot);
+    }
+    else{
+        pausebtn.value="Pause";
+        newrock = setInterval(createrock,5000);
+        shoot = setInterval(createbullet,200);
+        drawinterval = setInterval(function(){
+            drawbg();
+            for(i=0;i<currentrocks.length;i++){
+                currentrocks[i].drawrock();
+            }
+            canon.drawcanon();
+            for(i=0;i<shotbullets.length;i++){
+                shotbullets[i].movebullet();
+            }
+            rockhitcanon(canon);
+            bullethitrock();
+        },10);
+    }
+}
+
 startbtn.style.display="block";
 scoredisp.style.display="none";
+pausebtn.style.display="none";
+
+pausebtn.onclick=pausegame;
 startbtn.onclick=init;
