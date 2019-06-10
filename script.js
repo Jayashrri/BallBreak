@@ -10,6 +10,7 @@ var ctx;
 var playerscore=0;
 var bps=5;
 var maxstrength=10;
+var minstrength=1;
 var count=0;
 
 var minrockH=350;
@@ -41,6 +42,7 @@ function updatescore(){
     if(count==5){
         bps++;
         maxstrength++;
+        minstrength++;
         count=0;
     }
 }
@@ -182,7 +184,7 @@ class Bullet {
     }
 
     bulletused(){
-        this.alive=false;
+        shotbullets.splice(shotbullets.indexOf(this),1);
     }
 
     get bx(){
@@ -204,7 +206,7 @@ function createbullet(){
 }
 
 function createrock(){
-    let str=Math.floor(Math.random()*maxstrength+1);
+    let str=Math.floor(Math.random()*(maxstrength-minstrength)+minstrength);
     let rh=Math.floor(Math.random()*(510-minrockH)+minrockH);
     let rx;
     if(Math.round(Math.random())==1)
