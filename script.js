@@ -8,6 +8,7 @@ var j;
 var ctx;
 
 var playerscore=0;
+var playerhigh=0;
 var bps=5;
 var maxstrength=10;
 var minstrength=1;
@@ -37,7 +38,7 @@ function drawbg(){
 }
 
 function updatescore(){
-    scoredisp.textContent="Score: "+playerscore;
+    scoredisp.textContent="Score: "+playerscore+"                                   Player High: "+playerhigh;
     count++;
     if(count==5){
         bps++;
@@ -237,6 +238,9 @@ function rockhitcanon(){
         var result = checkcollision(currentrocks[i].rx,currentrocks[i].ry,canon.cx,canon.cy,currentrocks[i].r);
         if(result){
             window.alert("Game Over!\n   Score: "+playerscore);
+            if(playerscore>playerhigh){
+                localStorage.setItem('playerhigh',playerscore);
+            }
             document.location.reload();
             clearInterval(drawinterval);
             clearInterval(shoot);
@@ -325,6 +329,10 @@ function pausegame(){
             bullethitrock();
         },10);
     }
+}
+
+if(localStorage.getItem('playerhigh')){
+    playerhigh=localStorage.getItem('playerhigh');
 }
 
 startbtn.style.display="block";
