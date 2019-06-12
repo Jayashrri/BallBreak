@@ -218,8 +218,8 @@ function createrock(){
 
 
 function checkcollision(cx,cy,rx,ry,r){
-    var distx = Math.abs(cx - rx-20);
-    var disty = Math.abs(cy - ry-10);
+    var distx = Math.abs(cx - (rx+20));
+    var disty = Math.abs(cy - (ry+10));
 
     if (distx > 20 + r) { return false; }
     if (disty > 10 + r) { return false; }
@@ -229,7 +229,7 @@ function checkcollision(cx,cy,rx,ry,r){
 
     var dx=distx-20;
     var dy=disty-10;
-    return (dx*dx+dy*dy<=900);
+    return (dx*dx+dy*dy<=r*r);
 }
 
 
