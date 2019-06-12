@@ -30,11 +30,11 @@ var canon;
 
 
 function drawbg(){
-    ctx.clearRect(0,80,410,450);
+    ctx.clearRect(0,50,1200,450);
     ctx.fillStyle="#396639";
-    ctx.fillRect(0,0,410,80);
+    ctx.fillRect(0,0,1200,50);
     ctx.fillStyle="#c5dfe0";
-    ctx.fillRect(0,80,410,450);
+    ctx.fillRect(0,50,1200,450);
 }
 
 function updatescore(){
@@ -52,7 +52,7 @@ function updatescore(){
 class Canon {
     constructor(){
         this.x=0;
-        this.y=80;
+        this.y=50;
         this.w=40;
         this.h=20;
         this.dx=0;
@@ -65,8 +65,8 @@ class Canon {
         if(leftpress){
             this.x-=4;
         }
-        if(this.x>370){
-            this.x=370;
+        if(this.x>1160){
+            this.x=1160;
         }
         else if(this.x<0){
             this.x=0;
@@ -111,18 +111,18 @@ class Rock {
             ctx.strokeStyle="white";
             ctx.stroke();
             ctx.save();
-            ctx.transform(1,0,0,-1,0,530);
+            ctx.transform(1,0,0,-1,0,500);
             ctx.fillStyle="white";
             ctx.font="20px Arial";
             ctx.textAlign="center";
-            ctx.fillText(this.strength,this.x,530-this.y);
+            ctx.fillText(this.strength,this.x,500-this.y);
             ctx.restore();
-            if(this.x<this.radius||this.x>410-this.radius){
+            if(this.x<this.radius||this.x>1200-this.radius){
                 this.dx=-this.dx;
             }
-            if(this.y<90+this.radius){
+            if(this.y<50+this.radius){
                 this.dy=-this.dy;
-                this.y=90+this.radius;
+                this.y=50+this.radius;
             }
             if(this.y>this.rockH)
                 this.dy=0;
@@ -160,7 +160,7 @@ class Rock {
 
 class Bullet {
     constructor(){
-        this.y=120;
+        this.y=70;
         this.dy=5;
         this.x=canonpos;
         this.alive=true;
@@ -175,7 +175,7 @@ class Bullet {
             ctx.closePath();
             ctx.fill();
             this.y+=this.dy;
-            if(this.y>530){
+            if(this.y>500){
                 this.alive=false;
             }
         }
@@ -208,10 +208,10 @@ function createbullet(){
 
 function createrock(){
     let str=Math.floor(Math.random()*(maxstrength-minstrength)+minstrength);
-    let rh=Math.floor(Math.random()*(510-minrockH)+minrockH);
+    let rh=Math.floor(Math.random()*(490-minrockH)+minrockH);
     let rx;
     if(Math.round(Math.random())==1)
-        rx=380;
+        rx=1170;
     else rx=30;
     ball=new Rock(str,rh,rh,rx,30,1,0);
 }
@@ -254,7 +254,7 @@ function bullethitrock(){
     for(i=0;i<shotbullets.length;i++){
         if(shotbullets[i].isalive){
             for(j=0;j<currentrocks.length;j++){
-                if(shotbullets[i].bx > currentrocks[j].rx-30 && shotbullets[i].bx < currentrocks[j].rx+30 && shotbullets[i].by > currentrocks[j].ry-30 && shotbullets[i].by < currentrocks[j].ry+30){
+                if(shotbullets[i].bx > currentrocks[j].rx-currentrocks[j].r && shotbullets[i].bx < currentrocks[j].rx+currentrocks[j].r && shotbullets[i].by > currentrocks[j].ry-currentrocks[j].r && shotbullets[i].by < currentrocks[j].ry+currentrocks[j].r){
                     shotbullets[i].bulletused();
                     currentrocks[j].rockhit();
                     playerscore++;
@@ -273,7 +273,7 @@ function init(){
     updatescore();
     var gamescreen = document.getElementById('gamescreen');
     ctx = gamescreen.getContext('2d');
-    ctx.transform(1,0,0,-1,0,530);
+    ctx.transform(1,0,0,-1,0,500);
     canon = new Canon();
 
     document.onkeydown = function(e) {
